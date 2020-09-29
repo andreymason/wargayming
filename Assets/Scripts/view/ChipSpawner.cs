@@ -14,14 +14,19 @@ public class ChipSpawner : MonoBehaviour
 
     //Spawns Chip in the given coordinates and with given color
     public void SpawnChip(Alpha sym, int num, Color color){
-        if(num <= 0 || num > 8 ) throw new System.Exception();
 
-        GameObject chip = Instantiate<GameObject>(chipPrefab);
-        chip.transform.position = new Vector3(
+        GameObject chipObj = Instantiate<GameObject>(chipPrefab);
+        chipObj.transform.position = new Vector3(
             coordXOffset + (float)(num - 1) * FieldSize,
             coordYOffset,
             coordZOffset + (float)sym * FieldSize
         );
-        if(color == Color.Black) chip.GetComponent<Chip>().Flip();
+
+        Chip chip = chipObj.GetComponent<Chip>();
+        chip.Color = color;
+        chip.Sym = sym;
+        chip.Num = num;
     }
+
+
 }
