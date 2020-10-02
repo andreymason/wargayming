@@ -9,8 +9,8 @@ public class SquareDetection : MonoBehaviour{
     const float offsetX = 2.5f;
     const float offsetZ = 2.5f;
     const float squareLength = 0.625f;
-    protected static int num;
-    protected static int sym;
+    public static int num;
+    public static int sym;
 
     private void Start()
     {

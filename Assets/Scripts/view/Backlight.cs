@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Backlight : SquareDetection
+public class Backlight : MonoBehaviour
 {
     const float FieldSize = 0.625f;
     const float coordXOffset = -2.175f;
@@ -14,16 +14,17 @@ public class Backlight : SquareDetection
     GameObject backlight;
     int currentSquareSym;
     int currentSquareNum;
-    
 
     void Update(){
+        int num = SquareDetection.num;
+        int sym = SquareDetection.sym;
         if(!isCreated && num > 0 && sym > 0){
             CreateBacklight(sym, num);
             isCreated = true;
             currentSquareSym = sym;
             currentSquareNum = num;
         }
-        if(PositionChanged(sym,num)){
+        if(PositionChanged(sym, num)){
             Destroy(backlight);
             isCreated = false;
         }
