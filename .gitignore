@@ -1,5 +1,7 @@
 $ cat .gitignore
 
+Library/PackageCache/
+
 # Created by https://www.toptal.com/developers/gitignore/api/unity,linux
 # Edit at https://www.toptal.com/developers/gitignore?templates=unity,linux
 

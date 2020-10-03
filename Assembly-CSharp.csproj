@@ -56,9 +56,12 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scenes\Menu\CanvasButton.cs" />
+     <Compile Include="Assets\Scenes\Menu\Class1.cs" />
      <Compile Include="Assets\Scenes\Menu\ExitButton.cs" />
+     <Compile Include="Assets\Scenes\Menu\NewBehaviourScript.cs" />
      <Compile Include="Assets\Scenes\Menu\PvE.cs" />
      <Compile Include="Assets\Scenes\Menu\PvP.cs" />
+     <Compile Include="Assets\Scripts\controller\Backlight.cs" />
      <Compile Include="Assets\Scripts\controller\MyScript.cs" />
      <Compile Include="Assets\Scripts\controller\SquareDetection.cs" />
      <Compile Include="Assets\Scripts\controller\events\EventManager.cs" />

@@ -9,8 +9,8 @@ public class SquareDetection : MonoBehaviour{
     const float offsetX = 2.5f;
     const float offsetZ = 2.5f;
     const float squareLength = 0.625f;
-    int num;
-    int sym;
+	public static int num {get; set; }
+    public static int sym {get; set; }
 
     private void Start()
     {
@@ -23,6 +23,7 @@ public class SquareDetection : MonoBehaviour{
         if(Physics.Raycast(ray, out touch, LayerMask.GetMask("Board"))){
             num = (int)Mathf.Ceil(coords.x/squareLength);
             sym = (int)Mathf.Ceil(coords.z/squareLength);
+			
         }
         else{
             num = -1;
