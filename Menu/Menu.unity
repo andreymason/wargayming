@@ -131,6 +131,7 @@ GameObject:
   m_Component:
   - component: {fileID: 32479166}
   - component: {fileID: 32479165}
+  - component: {fileID: 32479167}
   - component: {fileID: 32479164}
   m_Layer: 0
   m_Name: Main Camera
@@ -197,13 +198,29 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 32479163}
-  m_LocalRotation: {x: -0, y: 0.99300206, z: -0.118097015, w: 0}
+  m_LocalRotation: {x: 0, y: 0.9930021, z: -0.118097, w: 0}
   m_LocalPosition: {x: 0, y: 6, z: 10.69}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 13.565001, y: 180.00002, z: 0}
+  m_LocalEulerAnglesHint: {x: 75, y: 270, z: 0}
+--- !u!111 &32479167
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 32479163}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 0}
+  m_Animations:
+  - {fileID: 7400000, guid: b9864149c5e17e3499d590b6b4b17d6e, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!1 &33377510
 GameObject:
   m_ObjectHideFlags: 0
@@ -909,7 +926,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1137481518}
         m_MethodName: RestartGame
-        m_Mode: 3
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -968,7 +985,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PvP: {fileID: 1173487866}
   PvE: {fileID: 1709048056}
+  Start: {fileID: 1137481513}
+  Exit: {fileID: 955354663}
+  PvPButton: {fileID: 1649160725}
+  PvEButton: {fileID: 476602691}
   _sceneNumber2: 1
+  _sceneNumber: 0
+  Anim: {fileID: 32479167}
+  time: 2
 --- !u!1 &1173487866
 GameObject:
   m_ObjectHideFlags: 0
