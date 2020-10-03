@@ -8,7 +8,7 @@ public class TurnManager : MonoBehaviour{
     ModelMatrix modMatObj = new ModelMatrix();
     ChipSpawner CPObj;
 
-    void Start(){
+    private void Start(){
         EventManager.AddSquarePressedListener(Turn);
         CPObj = GameObject.FindObjectOfType<ChipSpawner>();
     }
