@@ -61,11 +61,13 @@
      <Compile Include="Assets\Scenes\Menu\NewBehaviourScript.cs" />
      <Compile Include="Assets\Scenes\Menu\PvE.cs" />
      <Compile Include="Assets\Scenes\Menu\PvP.cs" />
+     <Compile Include="Assets\Scripts\TurnManager.cs" />
      <Compile Include="Assets\Scripts\controller\Backlight.cs" />
      <Compile Include="Assets\Scripts\controller\MyScript.cs" />
      <Compile Include="Assets\Scripts\controller\SquareDetection.cs" />
      <Compile Include="Assets\Scripts\controller\events\EventManager.cs" />
      <Compile Include="Assets\Scripts\controller\events\SquarePressedEvent.cs" />
+     <Compile Include="Assets\Scripts\models\ModelMatrix.cs" />
      <Compile Include="Assets\Scripts\view\Alpha.cs" />
      <Compile Include="Assets\Scripts\view\AudioClipName.cs" />
      <Compile Include="Assets\Scripts\view\AudioInitializer.cs" />
