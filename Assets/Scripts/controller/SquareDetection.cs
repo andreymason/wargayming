@@ -34,6 +34,7 @@ public class SquareDetection : MonoBehaviour{
     {
         if(num != -1 && sym != -1){
             squarePressedEvent.Invoke((Alpha)(sym - 1),num);
+            //GameObject.FindWithTag("Board").GetComponent<TurnManager>().Turn((Alpha)(sym - 1),num);
         }
     }
 

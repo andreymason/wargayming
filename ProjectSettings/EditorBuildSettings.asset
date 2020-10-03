@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/gay.unity
+    path: Assets/Scenes/gay.unity
     guid: 0f2eea8c88c7d404e9d2aee5b9a2761a
   - enabled: 1
     path: Assets/Scenes/Menu/Menu.unity

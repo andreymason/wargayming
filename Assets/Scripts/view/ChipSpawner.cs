@@ -27,6 +27,4 @@ public class ChipSpawner : MonoBehaviour
         chip.Sym = sym;
         chip.Num = num;
     }
-
-
 }
