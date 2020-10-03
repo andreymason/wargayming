@@ -19,11 +19,10 @@ public class SquareDetection : MonoBehaviour{
 
     void Update(){
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Vector3 coords = new Vector3(touch.point.x + offsetX, 0, touch.point.z + offsetZ);
         if(Physics.Raycast(ray, out touch, LayerMask.GetMask("Board"))){
+			Vector3 coords = new Vector3(touch.point.x + offsetX, 0, touch.point.z + offsetZ);
             num = (int)Mathf.Ceil(coords.x/squareLength);
             sym = (int)Mathf.Ceil(coords.z/squareLength);
-			
         }
         else{
             num = -1;
