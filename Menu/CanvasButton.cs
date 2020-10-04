@@ -7,10 +7,7 @@ public class CanvasButton : MonoBehaviour
 {
     public GameObject PvP;
     public GameObject PvE;
-    public GameObject Start;
-    public GameObject Exit;
-    public GameObject PvPButton;
-    public GameObject PvEButton;
+    public GameObject Canvas;
     public int _sceneNumber2;
     public int _sceneNumber;
     public Animation Anim;
@@ -32,13 +29,8 @@ public class CanvasButton : MonoBehaviour
             //What should be done when choosing pve
         }
 
-        PvP.SetActive(false);
-        PvE.SetActive(false);
-        Start.SetActive(false);
-        Exit.SetActive(false);
-        PvPButton.SetActive(false);
-        PvEButton.SetActive(false);
-        
+        Canvas.SetActive(false);
+
         Anim.Play("New Animation");
         Invoke("Game", time);
     }
