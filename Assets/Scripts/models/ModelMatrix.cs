@@ -10,7 +10,7 @@ public class ModelMatrix : MonoBehaviour{
     private void Start()
     {
         cp = gameObject.GetComponent<ChipSpawner>();
-
+		//start Matrix initialization
         mainMatrix[3,3] = 1;
         mainMatrix[4,4] = 1;
         mainMatrix[3,4] = -1;
@@ -22,7 +22,6 @@ public class ModelMatrix : MonoBehaviour{
     }
 
     public bool AddValueToMainMatrix(Alpha sym, int num, Color color){
-        Debug.Log("Adding value" + num + ":" + sym);
         PossibleTurnsMatrix(color);
         if(turn[num - 1, (int)sym]){
             if(color == Color.Black){

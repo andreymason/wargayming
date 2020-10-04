@@ -9,8 +9,6 @@ public class TurnManager : MonoBehaviour{
     void Start(){
         EventManager.AddSquarePressedListener(Turn);
         modMatObj = gameObject.GetComponent<ModelMatrix>();
-
-        color = userColor;
     }
 
     //use AddValueToMainMatrix depending on which turn
@@ -29,13 +27,41 @@ public class TurnManager : MonoBehaviour{
     private void AiTurn(Color color){
         modMatObj.PossibleTurnsMatrix(color);
         List<int[]> posTurns = new List<int[]>();
+        MatrixDebug();
         for(int i = 0; i < 8; i++){
             for(int j = 0; j < 8; j++){
-                if(modMatObj.turn[i,j]) posTurns.Add(new int[2]);
+                if(modMatObj.turn[i,j]){
+                    int[] dot = new int[2];
+                    dot[0] = i;
+                    dot[1] = j;
+                    posTurns.Add(dot);
+                } 
             }
         }
-        int[] randomMove = posTurns[Random.Range(0,posTurns.Count)];
 
-        modMatObj.AddValueToMainMatrix((Alpha)randomMove[0],randomMove[1], color);
-    }    
+        int[] randomMove = posTurns[Random.Range(0,posTurns.Count)];
+        
+        Debug.Log("AiTurn: " + (Alpha)randomMove[1] + " " + (randomMove[0]+1));
+        modMatObj.AddValueToMainMatrix((Alpha)randomMove[1],randomMove[0] + 1, color);
+    }  
+
+    void MatrixDebug(){
+        string a = "A          ";
+        a += "B         ";
+        a += "C         ";
+        a += "D         ";
+        a += "E         ";
+        a += "F         ";
+        a += "G         ";
+        a += "H         \n";
+        for(int i = 0; i < 8; i++){
+            a += (i+1) + " ";
+            for(int j = 0; j < 8; j++){
+                a += (modMatObj.turn[i,j].ToString() + " ").PadRight(5,' ');
+            }
+            a += "\n";
+        }
+        Debug.Log(a); 
+    }
 }
+

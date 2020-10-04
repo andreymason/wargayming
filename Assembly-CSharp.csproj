@@ -60,20 +60,20 @@
      <Compile Include="Assets\Scripts\controller\events\SquarePressedEvent.cs" />
      <Compile Include="Assets\Scripts\controller\SquareDetection.cs" />
      <Compile Include="Assets\Scripts\view\AudioInitializer.cs" />
+     <Compile Include="Assets\Scenes\Menu\Class1.cs" />
+     <Compile Include="Assets\Scripts\controller\Backlight.cs" />
      <Compile Include="Assets\Scripts\view\Chip.cs" />
      <Compile Include="Assets\Scripts\view\AudioClipName.cs" />
      <Compile Include="Assets\Scripts\view\Color.cs" />
      <Compile Include="Assets\Scenes\Menu\PvE.cs" />
+     <Compile Include="Assets\Scenes\Menu\NewBehaviourScript.cs" />
+     <Compile Include="Assets\Scripts\models\ModelMatrix.cs" />
      <Compile Include="Assets\Scenes\Menu\CanvasButton.cs" />
      <Compile Include="Assets\Scripts\view\AudioManager.cs" />
      <Compile Include="Assets\Scripts\view\ChipSpawner.cs" />
+     <Compile Include="Assets\Scripts\models\TurnManager.cs" />
      <Compile Include="Assets\Scenes\Menu\ExitButton.cs" />
      <Compile Include="Assets\Scripts\view\Alpha.cs" />
-     <Compile Include="Assets\Scenes\Menu\Class1.cs" />
-     <Compile Include="Assets\Scripts\controller\Backlight.cs" />
-     <Compile Include="Assets\Scenes\Menu\NewBehaviourScript.cs" />
-     <Compile Include="Assets\Scripts\models\ModelMatrix.cs" />
-     <Compile Include="Assets\Scripts\models\TurnManager.cs" />
  <Reference Include="Unity.Timeline.Editor">
  <HintPath>/home/karmaindusa/Dan/unity/wargayming/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
  </Reference>

@@ -33,8 +33,8 @@ public class SquareDetection : MonoBehaviour{
     private void OnMouseDown()
     {
         if(num != -1 && sym != -1){
-            squarePressedEvent.Invoke((Alpha)(sym - 1),num);
-            //GameObject.FindWithTag("Board").GetComponent<TurnManager>().Turn((Alpha)(sym - 1),num);
+            //squarePressedEvent.Invoke((Alpha)(sym - 1),num);
+            GameObject.FindWithTag("Board").GetComponent<TurnManager>().Turn((Alpha)(sym - 1),num);
         }
     }
 
