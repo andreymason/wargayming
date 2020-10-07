@@ -11,7 +11,7 @@ public class ModelMatrix : MonoBehaviour{
     private void Start()
     {
         cp = gameObject.GetComponent<ChipSpawner>();
-		//start Matrix initialization
+        //start Matrix initialization
         mainMatrix[3,3] = 1;
         mainMatrix[4,4] = 1;
         mainMatrix[3,4] = -1;
@@ -46,7 +46,7 @@ public class ModelMatrix : MonoBehaviour{
     public void PossibleTurnsMatrix (Color color)
     {
         for (byte i = 0; i < 8; i++)
-			for (byte j = 0; j < 8; j++)
+            for (byte j = 0; j < 8; j++)
             {
                 if (mainMatrix[i, j] == 0)
                 {
@@ -54,7 +54,7 @@ public class ModelMatrix : MonoBehaviour{
                 }
                 else continue;
             }
-	}
+    }
 
     /// <summary>
     /// checks whether the turn move is possible
@@ -62,7 +62,7 @@ public class ModelMatrix : MonoBehaviour{
     /// <param name="playerColor"></param>
     /// <param name="num"></param>
     /// <param name="sym"></param>
-	void IsTurnPossibleUpdate (int playerColor, int num, int sym)
+    void IsTurnPossibleUpdate (int playerColor, int num, int sym)
     {
         turn[num, sym] = false;
         foreach (Direction direction in Enum.GetValues(typeof(Direction)))
@@ -70,9 +70,9 @@ public class ModelMatrix : MonoBehaviour{
             int skaX = directionToCoordinate(direction, 'x');
             int skaY = directionToCoordinate(direction, 'y');
             for (int i = num, j = sym; (i + 2 * skaX) >= 0 && (i + 2 * skaX) < 8  && 
-                                       (j + 2 * skaY) >= 0 && (j + 2 * skaY)< 8 && 
-                                       (mainMatrix[i +  skaX, j + skaY] != playerColor) &&
-                                       (mainMatrix[i +  skaX, j + skaY] != 0);)
+                     (j + 2 * skaY) >= 0 && (j + 2 * skaY)< 8 &&
+                     (mainMatrix[i +  skaX, j + skaY] != playerColor) &&
+                     (mainMatrix[i +  skaX, j + skaY] != 0);)
             {
                 j += skaY;
                 i += skaX;
@@ -82,7 +82,7 @@ public class ModelMatrix : MonoBehaviour{
                 }
             }
         }
-	}
+    }
 
     /// <summary>
     /// converts direction to sutable for logic functions view
@@ -106,6 +106,88 @@ public class ModelMatrix : MonoBehaviour{
         }
         else throw new ArgumentOutOfRangeException();
     }
-    
+    public void FlipChipsAfterTurn(Alpha sym, int num, Color color_not_casted) {
+        int color = (int)color_not_casted;
+        for(int i = (int)sym + 2; i <= 8; i++) { //Проверяем 1 луч из 8
+            if (mainMatrix[num, i - 1] == -color && mainMatrix[num, i] == color) { // Ищем пару не наша фишка + наша фишка
+                for (int j = (int)sym + 1; j <= i - 1; j++) { // Если нашли, то пускаем цикл, который на этом промежутке перевернет все не наши фишки
+                    if (mainMatrix[num, j] == -color) {
+                        mainMatrix[num, j] = color;
+                    }
+                }
+                break;
+            }
+        }
+        for(int i = (int)sym - 2; i >= 0; i--) { // До этого шли на восток, теперь идем на запад
+            if (mainMatrix[num, i + 1] == -color && mainMatrix[num, i] == color) {
+                for (int j = (int)sym - 1; j >= i + 1; j--) {
+                    if (mainMatrix[num, j] == -color) {
+                        mainMatrix[num, j] = color;
+                    }
+                }
+                break;
+            }
+        }
+        for(int i = num + 2; i <= 8; i++) { // На север
+            if (mainMatrix[i - 1, (int)sym] == -color && mainMatrix[i, (int)sym] == color) {
+                for (int j = num + 1; j <= i - 1; j++) {
+                    if (mainMatrix[j, (int)sym] == -color) {
+                        mainMatrix[j, (int)sym] = color;
+                    }
+                }
+                break;
+            }
+        }
+        for(int i = num - 2; i >= 0; i--) { // На юг
+            if (mainMatrix[i + 1, (int)sym] == -color && mainMatrix[i, (int)sym] == color) {
+                for (int j = num - 1; j >= i + 1; j--) {
+                    if (mainMatrix[j, (int)sym] == -color) {
+                        mainMatrix[j, (int)sym] = color;
+                    }
+                }
+                break;
+            }
+        }
+        for(int i = (int)sym + 2, i2 = num + 2; i <= 8 && i2 <= 8; i++, i2++) { // Северо-восток
+            if (mainMatrix[i2 - 1, i - 1] == -color && mainMatrix[i2, i] == color) {
+                for (int j = (int)sym + 1, j2 = num + 1; j <= i - 1 && j2 <= i2 - 1; j++, j2++) {
+                    if (mainMatrix[j2, j] == -color) {
+                        mainMatrix[j2, j] = color;
+                    }
+                }
+                break;
+            }
+        }
+        for(int i = (int)sym - 2, i2 = num + 2; i >= 0 && i2 <= 8; i--, i2++) { // Северо-запад
+            if (mainMatrix[i2 - 1, i + 1] == -color && mainMatrix[i2, i] == color) {
+                for (int j = (int)sym - 1, j2 = num + 1; j >= i + 1 && j2 <= i2 - 1; j--, j2++) {
+                    if (mainMatrix[j2, j] == -color) {
+                        mainMatrix[j2, j] = color;
+                    }
+                }
+                break;
+            }
+        }
+        for(int i = (int)sym + 2, i2 = num - 2; i <= 8 && i2 >= 0; i++, i2--) { // Юго-восток
+            if (mainMatrix[i2 + 1, i - 1] == -color && mainMatrix[i2, i] == color) {
+                for (int j = (int)sym + 1, j2 = num - 1; j <= i - 1 && j2 >= i2 + 1; j++, j2--) {
+                    if (mainMatrix[j2, j] == -color) {
+                        mainMatrix[j2, j] = color;
+                    }
+                }
+                break;
+            }
+        }
+        for(int i = (int)sym - 2, i2 = num - 2; i >= 0 && i2 >= 0; i--, i2--) { // Юго-запад
+            if (mainMatrix[i2 + 1, i + 1] == -color && mainMatrix[i2, i] == color) {
+                for (int j = (int)sym - 1, j2 = num - 1; j >= i + 1 && j2 >= i2 + 1; j--, j2--) {
+                    if (mainMatrix[j2, j] == -color) {
+                        mainMatrix[j2, j] = color;
+                    }
+                }
+                break;
+            }
+        }
+    }
 
 }
