@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class ModelMatrix : MonoBehaviour{
@@ -10,18 +12,19 @@ public class ModelMatrix : MonoBehaviour{
     private void Start()
     {
         cp = gameObject.GetComponent<ChipSpawner>();
-		//start Matrix initialization
+        //start Matrix initialization
         mainMatrix[3,3] = 1;
         mainMatrix[4,4] = 1;
         mainMatrix[3,4] = -1;
         mainMatrix[4,3] = -1;
-        cp.SpawnChip((Alpha)3,4,Color.White);
-        cp.SpawnChip((Alpha)4,5,Color.White);
-        cp.SpawnChip((Alpha)3,5,Color.Black);
-        cp.SpawnChip((Alpha)4,4,Color.Black);
+        cp.SpawnChip(Alpha.D,4,Color.White);
+        cp.SpawnChip(Alpha.E,5,Color.White);
+        cp.SpawnChip(Alpha.D,5,Color.Black);
+        cp.SpawnChip(Alpha.E,4,Color.Black);
     }
 
-    public bool AddValueToMainMatrix(Alpha sym, int num, Color color){
+    public bool AddValueToMainMatrix(Alpha sym, int num, Color color)
+    {
         PossibleTurnsMatrix(color);
         if(turn[num - 1, (int)sym]){
             if(color == Color.Black){
@@ -30,6 +33,10 @@ public class ModelMatrix : MonoBehaviour{
             else{
                 mainMatrix[num - 1, (int)sym] =  1;
             }
+
+            turn[num - 1, (int) sym] = false;
+            FlipChipsAfterTurn((int)sym, num - 1, color == Color.White? 1 : -1);
+            
             cp.SpawnChip(sym,num,color);
             AudioManager.Play(AudioClipName.chip);
             return true;
@@ -37,169 +44,127 @@ public class ModelMatrix : MonoBehaviour{
         return false;
     }
     
+    //fills the possible turns matrix for the given player color
     public void PossibleTurnsMatrix (Color color)
-	{
-		sbyte igrock;
-		if(color ==Color.White)
-			igrock = 1;
-		else
-			igrock = -1;
+    {
+        for (byte i = 0; i < 8; i++)
+            for (byte j = 0; j < 8; j++)
+            {
+                if (mainMatrix[i, j] == 0)
+                {
+                    IsTurnPossibleUpdate(color == Color.White? 1 : -1, i, j);
+                }
+            }
+    }
 
-		//происзодит заполнение матрицы возможных ходов
-		for (byte i = 0; i < 8; i++)
-			for (byte j = 0; j < 8; j++)
-			{
-				if (igrock == mainMatrix [i, j]) 
-				{
-					est_li_hod (mainMatrix [i, j], i, j);
-				} 
-				else 
-				{
-					continue;
-				}
-			}
-	}
+    /// <summary>
+    /// checks whether the turn move is possible
+    /// </summary>
+    /// <param name="playerColor"></param>
+    /// <param name="num"></param>
+    /// <param name="sym"></param>
+    void IsTurnPossibleUpdate (int playerColor, int num, int sym)
+    {
+        turn[num, sym] = false;
+        foreach (Direction direction in Enum.GetValues(typeof(Direction)))
+        {
+            int skaX = DirectionToCoordinate(direction, 'x');
+            int skaY = DirectionToCoordinate(direction, 'y');
+            for (int i = num, j = sym; (i + 2 * skaX) >= 0 && (i + 2 * skaX) < 8  && 
+                     (j + 2 * skaY) >= 0 && (j + 2 * skaY)< 8 &&
+                     (mainMatrix[i +  skaX, j + skaY] != playerColor) &&
+                     (mainMatrix[i +  skaX, j + skaY] != 0);)
+            {
+                j += skaY;
+                i += skaX;
+                if (mainMatrix[i + skaX, j + skaY] == playerColor)
+                {
+                    turn[num, sym] = true;
+                    break;
+                }
+            }
 
-	void est_li_hod (int igroc_color, int num, int sym)
-	{
-		//вверх
-		if (num > 0 && igroc_color == (-mainMatrix [num - 1, sym])) //проверка, есть ли сверху фишка противоположного цвета (и фишка должна біть не на краю доски)
-		{ 
-			for (int i = num - 1; i >= 0; i--) //иду вверз от текущей позиции
-			{
-				if (igroc_color == (mainMatrix [i, sym])) //если встречаю фишку своего цвета до того, как была найдена пустая клетка, походить сверху не выйдет 
-				{
-					break;
-				}
-				else if (mainMatrix [i, sym] == 0) //если после всех фишек противоположного цвета есть пустая клетка, значит в неё есть возможность походить
-				{
-					turn [i, sym] = true; //по координатам клетки ставлю тру (ходить туда можно)
-					break;
-				}
-			}
-		} else {} //если не ставить иногда начинается какая то катовсия с ифами, на всякий пожарній крч
+            if (turn[num, sym]) break;
+        }
+    }
 
-		//остальное аналогично, меняется только сторона, "куда я иду проверять"
+    /// <summary>
+    /// flips the affected chips
+    /// </summary>
+    /// <param name="sym"></param>
+    /// <param name="num"></param>
+    /// <param name="playerColor"></param>
+    void FlipChipsAfterTurn(int sym, int num, int playerColor)
+    {
+        foreach (Direction direction in Enum.GetValues(typeof(Direction)))
+        {
+            int skaX = DirectionToCoordinate(direction, 'x');
+            int skaY = DirectionToCoordinate(direction, 'y');
+            for (int i = num, j = sym;
+                (i + 2*skaX) >= 0 && (i + 2*skaX) < 8 &&
+                (j + 2*skaY) >= 0 && (j + 2*skaY) < 8 &&
+                (mainMatrix[i + skaX, j + skaY] != playerColor) &&
+                (mainMatrix[i + skaX, j + skaY] != 0);)
+            {
+                j += skaY;
+                i += skaX;
+                if (mainMatrix[i + skaX, j + skaY] == playerColor)
+                {
+                    for (int n = i, k = j; n != num || k != sym;)
+                    {
+                        if (!FlipChip(n + 1, (Alpha) k)) throw new NullReferenceException();
+                        n -= skaX;
+                        k -= skaY;
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    
+    /// <summary>
+    /// converts direction to sutable for logic functions view
+    /// Avilable axes are 'x' and 'y'
+    /// </summary>
+    /// <param name="direction"></param>
+    /// <param name="axis"></param>
+    int DirectionToCoordinate(Direction direction, char axis)
+    {
+        if (axis == 'x')
+        {
+            if ((int) direction % 4 == 0) return 0;
+            else if ((int) direction < 4) return 1;
+            else return -1;
+        }
+        else if (axis == 'y')
+        {
+            if ((int) direction % 4 == 2) return 0;
+            else if ((int) direction % 6 < 2) return 1;
+            else return -1;
+        }
+        else throw new ArgumentOutOfRangeException();
+    }
 
-		//вверх-вправо
-		if (num > 0 && sym < 7 && igroc_color == (-mainMatrix [num - 1,sym + 1]))
-		{
-			for (int i = num - 1, j = sym + 1; i >= 0 && j < 8; i--, j++) {
-				if (igroc_color == (mainMatrix [i, j])) 
-				{ 
-					break;
-				}
-				else if (mainMatrix [i, j] == 0) 
-				{ 
-					turn [i, j] = true; 
-					break;
-				}
-			}
-		} else {}
+    /// <summary>
+    /// flips the chip
+    /// </summary>
+    /// <param name="num"></param>
+    /// <param name="sym"></param>
+    /// <returns>returns false if the chip was not found</returns>
+    bool FlipChip(int num, Alpha sym)
+    {
+        GameObject[] chipObjects = GameObject.FindGameObjectsWithTag("Chip");
+        foreach (GameObject obj in chipObjects)
+        {
+            Chip currChip = obj.GetComponent<Chip>();
+            if (currChip.Sym == sym && currChip.Num == num)
+            {
+                mainMatrix[num - 1, (int) sym] *= -1;
+                currChip.Flip();
+                return true;
+            }
+        }
 
-
-		//вправо
-		if (sym < 7 && igroc_color == (-mainMatrix [num,sym + 1]))
-		{
-			for (int i = sym + 1; i < 8; i++) 
-			{
-				if (igroc_color == (mainMatrix [num, i]))
-				{
-					break;
-				}
-				else if (mainMatrix [num, i] == 0) 
-				{
-					turn [num, i] = true; 
-					break;
-				}
-			}
-		} else {}
-
-
-		//вниз-вправо
-		if (num < 7 && sym < 7 && igroc_color == (-mainMatrix [num + 1,sym + 1]))
-		{
-			for (int i = num + 1, j = sym + 1; i < 8 && j < 8; i++, j++) {
-				if (igroc_color == (mainMatrix [i, j]))
-				{
-					break;
-				}
-				else if (mainMatrix [i, j] == 0) 
-				{ 
-					turn [i, j] = true; 
-					break;
-				} 
-			}
-		} else {}
-
-
-		//вниз
-		if (num < 7 && igroc_color == (-mainMatrix [num + 1,sym]))
-		{
-			for (int i = num + 1; i < 8; i++) 
-			{
-				if (igroc_color == (mainMatrix [i, sym])) 
-				{
-					break;
-				}
-				else if (mainMatrix [i, sym] == 0)
-				{
-					turn [i, sym] = true;
-					break;
-				}
-			}
-		} else {}
-
-
-		//вниз-влево
-		if (num < 7 && sym > 0 && igroc_color == (-mainMatrix [num + 1,sym - 1]))
-		{
-			for (int i = num + 1, j = sym - 1; i < 8 && j >= 0; i++, j--) {
-				if (igroc_color == (mainMatrix [i, j]))
-				{
-					break;
-				}
-				else if (mainMatrix [i, j] == 0) 
-				{
-					turn [i, j] = true; 
-					break;
-				}
-			}
-		} else {}
-
-
-		//влево
-		if (sym > 0 && igroc_color == (-mainMatrix [num,sym - 1]))
-		{
-			for (int i = sym - 1; i >= 0; i--) 
-			{
-				if (igroc_color == (mainMatrix [num, i]))
-				{
-					break;
-				}
-				else if (mainMatrix [num, i] == 0) 
-				{
-					turn [num, i] = true;
-					break;
-				}
-			} 
-		} else {}
-
-
-		//вверх-влево
-		if (num > 0 && sym > 0 && igroc_color == (-mainMatrix [num - 1,sym - 1]))
-		{
-			for (int i = num - 1, j = sym - 1; i >= 0 && j >= 0; i--, j--) {
-				if (igroc_color == (mainMatrix [i, j]))
-				{
-					break;
-				}
-				else if (mainMatrix [i, j] == 0) 
-				{
-					turn [i, j] = true; 
-					break;
-				}
-			}
-		} else {}
-	}
+        return false;
+    }
 }
