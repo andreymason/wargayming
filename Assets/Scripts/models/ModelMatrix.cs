@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class ModelMatrix : MonoBehaviour{
@@ -34,6 +35,7 @@ public class ModelMatrix : MonoBehaviour{
             }
 
             turn[num - 1, (int) sym] = false;
+            FlipChipsAfterTurn((int)sym, num - 1, color == Color.White? 1 : -1);
             
             cp.SpawnChip(sym,num,color);
             AudioManager.Play(AudioClipName.chip);
@@ -52,7 +54,6 @@ public class ModelMatrix : MonoBehaviour{
                 {
                     IsTurnPossibleUpdate(color == Color.White? 1 : -1, i, j);
                 }
-                else continue;
             }
     }
 
@@ -67,8 +68,8 @@ public class ModelMatrix : MonoBehaviour{
         turn[num, sym] = false;
         foreach (Direction direction in Enum.GetValues(typeof(Direction)))
         {
-            int skaX = directionToCoordinate(direction, 'x');
-            int skaY = directionToCoordinate(direction, 'y');
+            int skaX = DirectionToCoordinate(direction, 'x');
+            int skaY = DirectionToCoordinate(direction, 'y');
             for (int i = num, j = sym; (i + 2 * skaX) >= 0 && (i + 2 * skaX) < 8  && 
                      (j + 2 * skaY) >= 0 && (j + 2 * skaY)< 8 &&
                      (mainMatrix[i +  skaX, j + skaY] != playerColor) &&
@@ -78,19 +79,56 @@ public class ModelMatrix : MonoBehaviour{
                 i += skaX;
                 if (mainMatrix[i + skaX, j + skaY] == playerColor)
                 {
-                    turn[i - skaX, j - skaY] = true;
+                    turn[num, sym] = true;
+                    break;
+                }
+            }
+
+            if (turn[num, sym]) break;
+        }
+    }
+
+    /// <summary>
+    /// flips the affected chips
+    /// </summary>
+    /// <param name="sym"></param>
+    /// <param name="num"></param>
+    /// <param name="playerColor"></param>
+    void FlipChipsAfterTurn(int sym, int num, int playerColor)
+    {
+        foreach (Direction direction in Enum.GetValues(typeof(Direction)))
+        {
+            int skaX = DirectionToCoordinate(direction, 'x');
+            int skaY = DirectionToCoordinate(direction, 'y');
+            for (int i = num, j = sym;
+                (i + 2*skaX) >= 0 && (i + 2*skaX) < 8 &&
+                (j + 2*skaY) >= 0 && (j + 2*skaY) < 8 &&
+                (mainMatrix[i + skaX, j + skaY] != playerColor) &&
+                (mainMatrix[i + skaX, j + skaY] != 0);)
+            {
+                j += skaY;
+                i += skaX;
+                if (mainMatrix[i + skaX, j + skaY] == playerColor)
+                {
+                    for (int n = i, k = j; n != num || k != sym;)
+                    {
+                        if (!FlipChip(n + 1, (Alpha) k)) throw new NullReferenceException();
+                        n -= skaX;
+                        k -= skaY;
+                    }
+                    break;
                 }
             }
         }
     }
-
+    
     /// <summary>
     /// converts direction to sutable for logic functions view
     /// Avilable axes are 'x' and 'y'
     /// </summary>
     /// <param name="direction"></param>
     /// <param name="axis"></param>
-    int directionToCoordinate(Direction direction, char axis)
+    int DirectionToCoordinate(Direction direction, char axis)
     {
         if (axis == 'x')
         {
@@ -106,88 +144,27 @@ public class ModelMatrix : MonoBehaviour{
         }
         else throw new ArgumentOutOfRangeException();
     }
-    public void FlipChipsAfterTurn(Alpha sym, int num, Color color_not_casted) {
-        int color = (int)color_not_casted;
-        for(int i = (int)sym + 2; i <= 8; i++) { //Проверяем 1 луч из 8
-            if (mainMatrix[num, i - 1] == -color && mainMatrix[num, i] == color) { // Ищем пару не наша фишка + наша фишка
-                for (int j = (int)sym + 1; j <= i - 1; j++) { // Если нашли, то пускаем цикл, который на этом промежутке перевернет все не наши фишки
-                    if (mainMatrix[num, j] == -color) {
-                        mainMatrix[num, j] = color;
-                    }
-                }
-                break;
-            }
-        }
-        for(int i = (int)sym - 2; i >= 0; i--) { // До этого шли на восток, теперь идем на запад
-            if (mainMatrix[num, i + 1] == -color && mainMatrix[num, i] == color) {
-                for (int j = (int)sym - 1; j >= i + 1; j--) {
-                    if (mainMatrix[num, j] == -color) {
-                        mainMatrix[num, j] = color;
-                    }
-                }
-                break;
-            }
-        }
-        for(int i = num + 2; i <= 8; i++) { // На север
-            if (mainMatrix[i - 1, (int)sym] == -color && mainMatrix[i, (int)sym] == color) {
-                for (int j = num + 1; j <= i - 1; j++) {
-                    if (mainMatrix[j, (int)sym] == -color) {
-                        mainMatrix[j, (int)sym] = color;
-                    }
-                }
-                break;
-            }
-        }
-        for(int i = num - 2; i >= 0; i--) { // На юг
-            if (mainMatrix[i + 1, (int)sym] == -color && mainMatrix[i, (int)sym] == color) {
-                for (int j = num - 1; j >= i + 1; j--) {
-                    if (mainMatrix[j, (int)sym] == -color) {
-                        mainMatrix[j, (int)sym] = color;
-                    }
-                }
-                break;
-            }
-        }
-        for(int i = (int)sym + 2, i2 = num + 2; i <= 8 && i2 <= 8; i++, i2++) { // Северо-восток
-            if (mainMatrix[i2 - 1, i - 1] == -color && mainMatrix[i2, i] == color) {
-                for (int j = (int)sym + 1, j2 = num + 1; j <= i - 1 && j2 <= i2 - 1; j++, j2++) {
-                    if (mainMatrix[j2, j] == -color) {
-                        mainMatrix[j2, j] = color;
-                    }
-                }
-                break;
-            }
-        }
-        for(int i = (int)sym - 2, i2 = num + 2; i >= 0 && i2 <= 8; i--, i2++) { // Северо-запад
-            if (mainMatrix[i2 - 1, i + 1] == -color && mainMatrix[i2, i] == color) {
-                for (int j = (int)sym - 1, j2 = num + 1; j >= i + 1 && j2 <= i2 - 1; j--, j2++) {
-                    if (mainMatrix[j2, j] == -color) {
-                        mainMatrix[j2, j] = color;
-                    }
-                }
-                break;
-            }
-        }
-        for(int i = (int)sym + 2, i2 = num - 2; i <= 8 && i2 >= 0; i++, i2--) { // Юго-восток
-            if (mainMatrix[i2 + 1, i - 1] == -color && mainMatrix[i2, i] == color) {
-                for (int j = (int)sym + 1, j2 = num - 1; j <= i - 1 && j2 >= i2 + 1; j++, j2--) {
-                    if (mainMatrix[j2, j] == -color) {
-                        mainMatrix[j2, j] = color;
-                    }
-                }
-                break;
-            }
-        }
-        for(int i = (int)sym - 2, i2 = num - 2; i >= 0 && i2 >= 0; i--, i2--) { // Юго-запад
-            if (mainMatrix[i2 + 1, i + 1] == -color && mainMatrix[i2, i] == color) {
-                for (int j = (int)sym - 1, j2 = num - 1; j >= i + 1 && j2 >= i2 + 1; j--, j2--) {
-                    if (mainMatrix[j2, j] == -color) {
-                        mainMatrix[j2, j] = color;
-                    }
-                }
-                break;
-            }
-        }
-    }
 
+    /// <summary>
+    /// flips the chip
+    /// </summary>
+    /// <param name="num"></param>
+    /// <param name="sym"></param>
+    /// <returns>returns false if the chip was not found</returns>
+    bool FlipChip(int num, Alpha sym)
+    {
+        GameObject[] chipObjects = GameObject.FindGameObjectsWithTag("Chip");
+        foreach (GameObject obj in chipObjects)
+        {
+            Chip currChip = obj.GetComponent<Chip>();
+            if (currChip.Sym == sym && currChip.Num == num)
+            {
+                mainMatrix[num - 1, (int) sym] *= -1;
+                currChip.Flip();
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
